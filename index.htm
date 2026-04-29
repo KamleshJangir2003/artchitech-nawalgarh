@@ -695,12 +695,24 @@
 		id="jquery-migrate-js"></script>
 	<script defer type="text/javascript" src="wp-content/plugins/lumoria-plus/modules/site-loader/assets/js/site-loader.js"></script>
 	<script>
-		// Fix: Force all lazyload containers to load
-		document.addEventListener('DOMContentLoaded', function() {
-			document.querySelectorAll('.e-con.e-parent:not(.e-lazyloaded)').forEach(function(el) {
-				el.classList.add('e-lazyloaded');
-			});
-		});
+		// Static HTML fix: mark all containers as lazyloaded immediately
+		// Run inline (not deferred) so it fires before any CSS paint
+		(function() {
+			function markLazyloaded() {
+				document.querySelectorAll('.e-con.e-parent').forEach(function(el) {
+					el.classList.add('e-lazyloaded');
+				});
+			}
+			// Run on DOMContentLoaded AND on load to cover all timing scenarios
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', markLazyloaded);
+			} else {
+				markLazyloaded();
+			}
+			window.addEventListener('load', markLazyloaded);
+			// Also fire on Elementor's custom lazyload event
+			document.addEventListener('elementor/lazyload/observe', markLazyloaded);
+		})();
 	</script>
 	<link rel="https://api.w.org/" href="wp-json/index.htm">
 	<link rel="alternate" title="JSON" type="application/json" href="wp-json/wp/v2/pages/541">
@@ -722,14 +734,12 @@
 		}
 	</style>
 	<style>
-		/* Fix: Remove lazyload restriction for static HTML */
-		.e-con.e-parent:not(.e-lazyloaded):not(.e-no-lazyload) {
-			background-image: unset;
-		}
+		/* Static HTML fix: disable lazyload CSS so background images always show */
+		.e-con.e-parent:not(.e-lazyloaded):not(.e-no-lazyload),
 		.e-con.e-parent:not(.e-lazyloaded):not(.e-no-lazyload) * {
-			background-image: unset;
+			background-image: revert !important;
 		}
-		/* Fix: Make all invisible elements visible */
+		/* Make animation-hidden elements visible immediately */
 		.elementor-invisible {
 			visibility: visible !important;
 			opacity: 1 !important;
@@ -1012,7 +1022,7 @@
 																	<li id="menu-item-63"
 																		class="menu-item menu-item-type-custom menu-item-object-custom  menu-item-63 menu-item-depth-0">
 																		<a href="about/index.htm"><span
-																						data-text="%1$s">About</span></a>
+																						data-text="%1$s">bout</span></a>
 																		<!-- <ul class="sub-menu is-hidden">
 																			<li class="close-nav"><a href="#"></a></li>
 																			<li class="go-back"><a href="#"></a></li>
