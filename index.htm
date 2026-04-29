@@ -694,6 +694,14 @@
 	<script defer type="text/javascript" src="wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"
 		id="jquery-migrate-js"></script>
 	<script defer type="text/javascript" src="wp-content/plugins/lumoria-plus/modules/site-loader/assets/js/site-loader.js"></script>
+	<script>
+		// Fix: Force all lazyload containers to load
+		document.addEventListener('DOMContentLoaded', function() {
+			document.querySelectorAll('.e-con.e-parent:not(.e-lazyloaded)').forEach(function(el) {
+				el.classList.add('e-lazyloaded');
+			});
+		});
+	</script>
 	<link rel="https://api.w.org/" href="wp-json/index.htm">
 	<link rel="alternate" title="JSON" type="application/json" href="wp-json/wp/v2/pages/541">
 	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://lumoria.wpengine.com/xmlrpc.php?rsd">
@@ -714,25 +722,19 @@
 		}
 	</style>
 	<style>
-		.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
-		.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
-			background-image: none !important;
+		/* Fix: Remove lazyload restriction for static HTML */
+		.e-con.e-parent:not(.e-lazyloaded):not(.e-no-lazyload) {
+			background-image: unset;
 		}
-
-		@media screen and (max-height: 1024px) {
-
-			.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
-			.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
-				background-image: none !important;
-			}
+		.e-con.e-parent:not(.e-lazyloaded):not(.e-no-lazyload) * {
+			background-image: unset;
 		}
-
-		@media screen and (max-height: 640px) {
-
-			.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
-			.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
-				background-image: none !important;
-			}
+		/* Fix: Make all invisible elements visible */
+		.elementor-invisible {
+			visibility: visible !important;
+			opacity: 1 !important;
+			animation: none !important;
+			transform: none !important;
 		}
 	</style>
 	<link rel="icon" href="wp-content/themes/lumoria/assets/images/favicon.ico" type="image/x-icon">
